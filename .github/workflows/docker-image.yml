@@ -19,10 +19,10 @@ jobs:
             echo "Docker username format is valid."
           fi
         shell: bash
-      - name: make ex to all .sh files
-        run: chmod +x ci/*.sh
       - name: Clone down repository
         uses: actions/checkout@v4
+      - name: make ex to all .sh files
+        run: chmod +x ci/*.sh
       - name: Build application
         run: ci/build-app.sh
       - name: Test
