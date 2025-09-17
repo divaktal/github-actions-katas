@@ -1,5 +1,6 @@
 name: Main workflow
 on: push
+
 jobs:
   Build:
     runs-on: ubuntu-latest
@@ -7,7 +8,9 @@ jobs:
     steps:
       - name: Clone down repository
         uses: actions/checkout@v4
-      - name: Build application
+        with:
+          fetch-depth: 0  # get full git history
+      - name: Make scripts executable
         run: chmod +x ci/*.sh
       - name: Build application
         run: ci/build-app.sh
@@ -24,12 +27,20 @@ jobs:
     runs-on: ubuntu-latest
     needs: [Build]
     steps:
+      # Checkout repo with git history so super-linter sees commits
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Optionally still download the code artifact if you want build outputs
       - name: Download code
         uses: actions/download-artifact@v4
         with:
           name: code
           path: .
-      - name: run linting
+
+      - name: Run Super-Linter
         uses: super-linter/super-linter/slim@v7 
         env:
           DEFAULT_BRANCH: main
@@ -47,9 +58,9 @@ jobs:
         with:
           name: code
           path: .
-      - name: ls
+      - name: List files
         run: ls -la ci
-      - name: build docker
+      - name: Build Docker image
         run: bash ci/build-docker.sh
-      - name: push docker
+      - name: Push Docker image
         run: bash ci/push-docker.sh
