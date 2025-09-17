@@ -69,7 +69,7 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login $REGISTRY -u $OWNER --password-stdin
 
       - name: Build Docker image
-        run: docker build -f ci/Dockerfile -t $REGISTRY/$OWNER/$IMAGE_NAME:latest .
+        run: docker build -f app/Dockerfile -t $REGISTRY/$OWNER/$IMAGE_NAME:latest .
 
       - name: Push Docker image
         run: docker push $REGISTRY/$OWNER/$IMAGE_NAME:latest
